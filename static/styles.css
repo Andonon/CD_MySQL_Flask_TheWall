@@ -1,0 +1,118 @@
+/*******************************************************************/
+/* Created: June 17 2017 by Troy Center, troycenter1@gmail.com.      */
+/* CSS for "The Wall" Coding Dojo Assignment                       */
+/*******************************************************************/
+
+/***************************************************/
+/*               CSS reset settings                */
+/***************************************************/
+
+*{
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+
+}
+#wrapper {
+    height: 1200px;
+    width: 800px;
+    padding: 50px;
+    background-image: linear-gradient(300deg, grey, white);
+}
+footer {
+    margin-top: 100px;
+    text-align: center;
+    font-size: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/***************************************************/
+/*     header CSS                                    */
+/***************************************************/
+#header {
+
+}
+#title {        
+    display: inline-block;
+}
+#logininfo {
+    display: inline-block;
+}
+#username {
+    display: inline-block;
+    position: relative; 
+    left: 200px;
+    font-weight: bold;
+
+}
+#loginlogout {
+    display: inline-block;
+    position: relative; 
+    left: 300px;
+
+}
+/***************************************************/
+/*    Flash Messages CSS                          */
+/***************************************************/
+
+#messagearea {
+    font-family: Courier New, Courier, monospace;
+    color: red; 
+    font-size: .7em;
+}
+
+
+/***************************************************/
+/*     MAIN CSS                                    */
+/***************************************************/
+#messageform {
+    height: 100px;
+    width: 800px; 
+}
+#message {
+    height: 100px;
+    width: 800px;
+    box-shadow: 3px 3px 3px grey;
+}
+
+/***************************************************/
+/*     Login CSS                                 */
+/***************************************************/
+#loginarea {
+    height: 300px;
+    width: 500px; 
+    text-align: center;
+    padding: 20px;
+    margin: 20px;
+}
+label, input {
+    margin: 5px;
+}
+
+/***************************************************/
+/*     Register CSS                                */
+/***************************************************/
+#registerarea {
+    height: 300px;
+    width: 500px; 
+    text-align: center;
+    padding: 20px;
+    margin: 20px;
+}
+
+
+/***************************************************/
+/*   Message CSS                                    */
+/***************************************************/
+#postmessagebutton {
+    border-radius: 8px;
+    box-shadow: 3px 3px 3px grey;
+    background-color: blue;
+    color: white;
+    height: 30px;
+    width: 130px;
+    font-weight: bold;
+    position: relative; 
+    left: 670px; 
+    top: 13px;
+}

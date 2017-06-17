@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <title>The Wall</title>
+        <meta description='Main Page for The Wall Message Board App'
+        <meta charset='utf-8'/>
+        <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='styles.css') }}' />
+    </head>
+    <body>
+        <div id='header'>
+            <div id='title'>
+                <h1>CodingDojo Wall</h1>
+            </div>
+            <div id='logininfo'>
+                <div id='username'>
+                    {% if session['logged_in'] %}
+                        <p>Welcome {{ session['user_first_name'] }}
+                    {% else %}
+                        <p>Welcome Anonymous</p>
+                    {% endif %}
+                </div>
+                <div id='loginlogout'>
+                    {% if session['logged_in'] %}
+                    <p><a href="/logout">Logout</a></p>
+                    {% else %}
+                        <p><a href="/login">Login</a></p>
+                    {% endif %}
+                </div>
+            </div> 
+        </div>
+        <div id='wrapper'>
+            <div id='messagearea'>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class=flashes>
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>     
+            <form action='/postmessage' method='POST' id="messageform">
+                <p><label for="message">Post a message</label></p>
+                <p><input type="textarea" name="message" id="message"></label></p>
+                <p><input type="submit" id='postmessagebutton' value="Post a message"></p>
+            </form>
+        </div>
+        <footer><p>By Troy Center, June 2017, Coding Dojo Student</p></footer>
+    </body>
+</html>
