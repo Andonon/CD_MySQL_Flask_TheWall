@@ -75,6 +75,10 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     error = 0
+#if user is just landing on this page, get request to load page.
+    if request.method == 'GET':
+        return render_template('register.html')
+#on form submit, POST request processing:
     if request.method == 'POST':
 #check first name (2 chars, submitted, and letters only)
         first_name = request.form['first_name']
@@ -134,24 +138,34 @@ def register():
 #prior to the insert, return any errors.
         if error > 0:
             return redirect('/register')
-        else:
-            print "==123== Passed user email check"
 #Generate password hash with BCrypt
-            pw_hash = bcrypt.generate_password_hash(user_password)
+        pw_hash = bcrypt.generate_password_hash(user_password)
 #Insert Query Build
-            query = "INSERT INTO users (first_name, last_name, email, password, \
-                    created_at, updated_at) values (:first_name, :last_name, \
-                    :email, :password, now(), now())"
-            data = {
-                'first_name': first_name, 'last_name': last_name, \
-                'email': email, 'password': pw_hash}
+        query = "INSERT INTO users (first_name, last_name, email, password, \
+                created_at, updated_at) values (:first_name, :last_name, \
+                :email, :password, now(), now())"
+        data = {
+            'first_name': first_name, 'last_name': last_name, \
+            'email': email, 'password': pw_hash}
 #Run insert Query, set session logged in = True, go to wall page
-            mysql.query_db(query, data)
+        mysql.query_db(query, data)
+#All checks are done, no errors, set some session data here. 
+#get info from db
+        query = "SELECT * from users where email = :email LIMIT 1"
+        data = {
+            'email': request.form['register_email']
+        }
+        get_user_reg = mysql.query_db(query, data)
+#check the email, which should be in the db now, get session data.
+        if get_user_reg:
+            session['id'] = get_user_reg[0]['id']
+            session['user_first_name'] = get_user_reg[0]['first_name']
             session['logged_in'] = True
-            return redirect('/')
-    else:
-        #exit on fail to main login page with flash error
-        if request.method == 'GET':
-            return render_template('register.html')
+        else:
+#catchall error, in case the insert failed for some reason. 
+            flash("Unknown error, db insert failed, could not find user account...")
+            return redirect('/login')
+#all processing is complete, redirect to "The Wall" as a logged in user!
+        return redirect('/')
 
 app.run(debug=True)
