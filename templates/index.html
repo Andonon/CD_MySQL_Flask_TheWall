@@ -42,7 +42,7 @@
             </div>     
             <form action='/postmessage' method='POST' id="messageform">
                 <p><label for="message">Post a message</label></p>
-                <p><input type="textarea" name="message" id="message"></label></p>
+                <p><textarea from="messageform" maxlength="500" rows="4" name="message" id="message" placeholder="500 chars max"></textarea></p>
                 <p><input type="submit" id='postmessagebutton' value="Post a message"></p>
             </form>
             <div id=messagesarea>
@@ -50,20 +50,20 @@
                     {% for em in user_messages %}                    
                     <li>{{ em.first_name }} {{ em.last_name }} - {{ em.datecreated }}</li>
                     <ul class='messagestext'>
-                        <li>{{ em.message }}</li>
+                        <li id="messagebody">{{ em.message }}</li>
                         <ul class='commentsheader'>
                         {% for ec in user_comments %}                                    
                             {% if em.id == ec.message_id %}
                             <li>{{ ec.first_name }} {{ ec.last_name }} - {{ ec.datecreated }}</li>
                             <ul class='commentstext'>
-                                <li>{{ ec.comment }}</li>
+                                <li id="commentbody">{{ ec.comment }}</li>
                             </ul>
                             {% endif %}
                         {% endfor %} 
                         <form action='/postcomment' method='POST' id="commentform">
                             <p><label for="comment">Post a comment</label></p>
                             <input type="hidden" name="messageid" value='{{ em.id }}'>
-                            <p><input type="textarea" name="comment" id="comment"></label></p>
+                            <p><textarea from="commentform" rows="4" maxlength="400" name="comment" id="comment" placeholder="400 chars max"></textarea></p>
                             <p><input type="submit" id='postcommentbutton' value="Post a comment"></p>
                         </form>
                         </ul>

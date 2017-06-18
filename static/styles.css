@@ -14,8 +14,8 @@
 
 }
 #wrapper {
-    height: 1200px;
-    width: 800px;
+    height: fit-content;
+    width: 900px;
     padding: 50px;
     background-image: linear-gradient(300deg, grey, white);
 }
@@ -65,16 +65,6 @@ footer {
 /***************************************************/
 /*     MAIN CSS                                    */
 /***************************************************/
-#messageform {
-    height: 100px;
-    width: 800px; 
-}
-#message {
-    height: 100px;
-    width: 800px;
-    box-shadow: 3px 3px 3px grey;
-    border: 2px solid black;
-}
 
 /***************************************************/
 /*     Login CSS                                 */
@@ -105,6 +95,19 @@ label, input {
 /***************************************************/
 /*   Message CSS                                    */
 /***************************************************/
+
+#messageform {
+    height: 100px;
+    width: 800px; 
+}
+#message {
+    box-shadow: 3px 3px 3px grey;
+    border: 2px solid black;
+    width: 800px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
 #postmessagebutton {
     border-radius: 8px;
     box-shadow: 3px 3px 3px grey;
@@ -114,12 +117,12 @@ label, input {
     width: 130px;
     font-weight: bold;
     position: relative; 
-    left: 670px; 
-    top: 13px;
+    left: 650px; 
+    top: 10px;
 }
 
 #messagesarea {
-    background-color: yellow;
+    /*background-color: yellow;*/
     position: relative;
     height: fit-content;
     width: 800px;
@@ -139,6 +142,10 @@ label, input {
     margin: 20px;
     font-weight: normal;
 }
+#messagebody {
+    width: 740px;
+    word-wrap: break-word;
+}
 #messageform label {
     font-weight: bold;
 }
@@ -146,15 +153,17 @@ label, input {
 /*  Comment CSS                                    */
 /***************************************************/
 #commentform {
-    background-color: red;
+    /*background-color: red;*/
     margin-top: 20px;
     margin-left: 10px;
 }
 #comment {
-    width: 700px;
-    height: 70px;
     border: 2px solid black;
     box-shadow: 3px 3px 3px grey;
+    width: 680px;
+    margin-left: 20px;
+    margin-top: 20px;
+    
 }
 #postcommentbutton {
     border-radius: 8px;
@@ -174,9 +183,14 @@ label, input {
 .commentsheader {
     list-style: none; 
     font-weight: bold;
+    margin-top: 20px;
 }
 .commentstext {
     list-style: none;     
     margin: 20px;
     font-weight: normal;
+}
+#commentbody {
+    width: 640px;
+    word-wrap: break-word;
 }

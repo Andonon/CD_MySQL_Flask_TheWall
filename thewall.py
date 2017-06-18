@@ -1,23 +1,38 @@
+'''==================================================================================
+This is "The Wall" project, a coding dojo assignment 
+by: Troy Center, troycenter1@gmail.com, Coding Dojo Python fundamentals, June 2017
+=================================================================================='''
 #pylint: disable=C0103,C0111
+
 import re
 from flask import Flask, render_template, redirect, request, flash, session
 from flask_bcrypt import Bcrypt
 from mysqlconnection import MySQLConnector
-
-def clearsession():
-    print "===8=== Clear Session just ran"
-    session['id'] = 0
-    session['user_first_name'] = 'Anonymous'
-    session['logged_in'] = False
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 mysql = MySQLConnector(app, 'thewall')
 app.secret_key = 'lkjas0llkdj123dlkja089'
 
+def clearsession():
+    '''=========================================
+    My method to reset session data       
+    ========================================='''
+    print "===8=== Clear Session just ran"
+    session['id'] = 0
+    session['user_first_name'] = 'Anonymous'
+    session['logged_in'] = False
+
+
 @app.route('/')
 def index():
-    #get info from db
+    '''=========================================
+    This is the home page of the wall loading, 
+    with refreshed messages and comments
+    ========================================='''
+    ##############################################
+    #   get info from db
+    ##############################################
     messagequery = (
         "select m.message, DATE_FORMAT(m.created_at,'%M %D %Y') as datecreated, u.first_name, "
         "u.last_name,m.id from messages m join users u on m.user_id = u.id order by id desc")
@@ -26,20 +41,31 @@ def index():
         "select c.comment, DATE_FORMAT(c.created_at,'%M %D %Y') as datecreated, u.first_name, "
         "u.last_name,c.message_id from comments c join users u on c.user_id = u.id")
     get_comments = mysql.query_db(commentsquery)
-    #send that query data back to Jinja to render on the page
+    ##############################################
+    # send that query data back to Jinja to render on the page
+    ##############################################
     return render_template('index.html', user_messages=get_messages, user_comments=get_comments)
 
 @app.route('/logout')
 def logout():
+    '''=========================================
+    This is the logout route, which resets session data 
+    and refreshes a false login state.
+    ========================================='''
     clearsession()
     session['logged_in'] = False
     return redirect('/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    '''=========================================
+    This is the login route, which resets session data 
+    and refreshes a true login state after validating the user exists.
+    ========================================='''
     if request.method == 'POST':
+        # set error checking
         error = 0
-        #get the user data from the db based on the email address the user typed
+        # get info from db
         #There are two fields coming in, username(email), and password
         #doing three checks on the login info... Is blank, or email bad...
         if not request.form['login_email']:
@@ -61,7 +87,9 @@ def login():
             'email': request.form['login_email']
         }
         get_user = mysql.query_db(query, data)
-        #Check the user info and password
+        #####################################################
+        # Check the user info and password
+        #####################################################    
         if get_user:
             session['id'] = get_user[0]['id']
             session['user_first_name'] = get_user[0]['first_name']
@@ -78,19 +106,26 @@ def login():
             clearsession()
             return redirect('/login')
     else:
-        #exit on fail to main login page with flash error
+        #####################################################
+        # exit on fail to main login page with flash error
+        #####################################################    
         if request.method == 'GET':
             return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    '''=========================================
+    This is the registration page route, which validates user input 
+    and refreshes a true login state after creating the user and then
+    running another db query to call the user ID back into Session Data
+    ========================================='''
+    #reset error checking
     error = 0
     #if user is just landing on this page, get request to load page.
     if request.method == 'GET':
         return render_template('register.html')
-    #on form submit, POST request processing:
     if request.method == 'POST':
-    #check first name (2 chars, submitted, and letters only)
+        #check first name (2 chars, submitted, and letters only)
         first_name = request.form['first_name']
         if not first_name:
             error += 1
@@ -135,22 +170,27 @@ def register():
         elif len(user_password) < 8:
             error += 1
             flash("Password must be at least 8 characters long.")
-        #get info from db
+        ##############################################
+        #  Here we start checking if the user already exists
+        ##############################################
         query = "SELECT * from users where email = :email LIMIT 1"
         data = {
             'email': request.form['register_email']
         }
         get_user_reg = mysql.query_db(query, data)
-        #check the email if it already exists
         if get_user_reg:
             flash("Email already exists, please login or use a different email.")
             error += 1
         #prior to the insert, return any errors.
         if error > 0:
             return redirect('/register')
-        #Generate password hash with BCrypt
+        ##############################################
+        #   BCRYPT Hashing 
+        ##############################################
         pw_hash = bcrypt.generate_password_hash(user_password)
-        #Insert Query Build
+        ##############################################
+        #  DATABASE INSERT
+        ##############################################
         query = "INSERT INTO users (first_name, last_name, email, password, \
                  created_at, updated_at) values (:first_name, :last_name, \
                  :email, :password, now(), now())"
@@ -159,8 +199,9 @@ def register():
             'email': email, 'password': pw_hash}
         #Run insert Query, set session logged in = True, go to wall page
         mysql.query_db(query, data)
-        #All checks are done, no errors, set some session data here.
-        #get info from db
+        ##############################################
+        #   All checks are done, no errors, set some session data here.
+        ##############################################
         query = "SELECT * from users where email = :email LIMIT 1"
         data = {
             'email': request.form['register_email']
@@ -175,11 +216,18 @@ def register():
             #catchall error, in case the insert failed for some reason.
             flash("Unknown error, db insert failed, could not find user account...")
             return redirect('/login')
-        #all processing is complete, redirect to "The Wall" as a logged in user!
+        ##############################################
+        #  all processing is complete, redirect to "The Wall" as a logged in user!
+        ##############################################
         return redirect('/')
 
 @app.route('/postmessage', methods=['GET', 'POST'])
 def postmessage():
+    '''=========================================
+    This is the postmessage route, wich pushes new messages, 
+    assuming the user is logged in, to the DB, and returns a 
+    refreshed page with the comments. 
+    ========================================='''
     if session['logged_in']:
         print request.form
         #Insert Query Build
@@ -199,6 +247,10 @@ def postmessage():
 
 @app.route('/postcomment', methods=['GET', 'POST'])
 def postcomment():
+    '''=========================================
+    Same as the message route, but for comments. Assuming user is logged in, 
+    pushed comments to the DB.
+    ========================================='''
     if session['logged_in']:
         print request.form
         #Insert Query Build
