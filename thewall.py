@@ -174,10 +174,9 @@ def register():
         #all processing is complete, redirect to "The Wall" as a logged in user!
         return redirect('/')
 
-
 @app.route('/postmessage', methods=['GET', 'POST'])
-def post(): 
-    if session['logged_in'] == True:
+def postmessage():
+    if session['logged_in']:
         print request.form
         #Insert Query Build
         query = "INSERT INTO messages (message, created_at, updated_at, user_id) \
@@ -191,6 +190,25 @@ def post():
         return redirect('/')
     else:
         flash("You can only post messages if you are logged in.")
+        flash("Please login, or register before posting. You can register in the login screen.")
+        return redirect('/')
+
+@app.route('/postcomment', methods=['GET', 'POST'])
+def postcomment():
+    if session['logged_in']:
+        print request.form
+        #Insert Query Build
+        query = "INSERT INTO comments (comment, created_at, updated_at, user_id) \
+                                       values (:comment, now(), now(), :user_id)"
+        data = {
+            'comment': request.form['comment'], 'user_id': session['id']
+        }
+        #Run insert Query, set session logged in = True, go to wall page
+        mysql.query_db(query, data)
+        print "Comment Added"
+        return redirect('/')
+    else:
+        flash("You can only post comments if you are logged in.")
         flash("Please login, or register before posting. You can register in the login screen.")
         return redirect('/')
 

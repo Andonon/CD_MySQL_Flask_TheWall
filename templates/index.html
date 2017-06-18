@@ -51,13 +51,21 @@
                     <li>{{ em.first_name }} {{ em.last_name }} - {{ em.datecreated }}</li>
                     <ul class='messagestext'>
                         <li>{{ em.message }}</li>
+                        <ul class='commentsheader'>
+                            {% for ec in user_comments %}
+                            <li>{{ ec.first_name }} {{ ec.last_name }} - {{ ec.datecreated }}</li>
+                            <ul class='commentstext'>
+                                <li>{{ ec.message }}</li>
+                            </ul>
+                            {% endfor %}
+                        <form action='/postcomment' method='POST' id="commentform">
+                            <p><label for="comment">Post a comment</label></p>
+                            <p><input type="textarea" name="comment" id="comment"></label></p>
+                            <p><input type="submit" id='postcommentbutton' value="Post a comment"></p>
+                        </form>
+                        </ul>
                     </ul>
                     {% endfor %}
-                    <form action='/postcomment' method='POST' id="commentform">
-                        <p><label for="comment">Post a comment</label></p>
-                        <p><input type="textarea" name="comment" id="comment"></label></p>
-                        <p><input type="submit" id='postcommentbutton' value="Post a comment"></p>
-                    </form>
                 </ul>
             </div>
         </div>
