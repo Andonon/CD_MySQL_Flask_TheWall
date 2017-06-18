@@ -17,7 +17,19 @@ app.secret_key = 'lkjas0llkdj123dlkja089'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    #get info from db
+    query = (
+        "select m.message, DATE_FORMAT(m.created_at,'%M %D %Y') as datecreated, u.first_name, "
+        "u.last_name from messages m join users u on m.user_id = u.id")
+    get_messages = mysql.query_db(query)
+    print "get_messages= ", get_messages
+    return render_template('index.html', user_messages=get_messages)
+
+@app.route('/logout')
+def logout():
+    clearsession()
+    session['logged_in'] = False
+    return redirect('/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,21 +78,15 @@ def login():
         if request.method == 'GET':
             return render_template('login.html')
 
-@app.route('/logout')
-def logout():
-    clearsession()
-    session['logged_in'] = False
-    return redirect('/')
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     error = 0
-#if user is just landing on this page, get request to load page.
+    #if user is just landing on this page, get request to load page.
     if request.method == 'GET':
         return render_template('register.html')
-#on form submit, POST request processing:
+    #on form submit, POST request processing:
     if request.method == 'POST':
-#check first name (2 chars, submitted, and letters only)
+    #check first name (2 chars, submitted, and letters only)
         first_name = request.form['first_name']
         if not first_name:
             error += 1
@@ -91,7 +97,7 @@ def register():
         elif len(first_name) < 3:
             error += 1
             flash("First Name must contain more than 2 characters.")
-#check last name (2 chars, submitted, and letters only)
+        #check last name (2 chars, submitted, and letters only)
         last_name = request.form['last_name']
         if not last_name:
             error += 1
@@ -102,7 +108,7 @@ def register():
         elif len(last_name) < 3:
             error += 1
             flash("Last Name must contain more than 2 characters.")
-#Check the email (present, looks like an email (regex))
+        #Check the email (present, looks like an email (regex))
         email = request.form['register_email']
         if not email:
             error += 1
@@ -110,7 +116,7 @@ def register():
         if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
             error += 1
             flash("Invalid Email Address detected.")
-#Check the password (both are present, must match, greater than 7 chars. )
+        #Check the password (both are present, must match, greater than 7 chars. )
         user_password = request.form['user_password']
         confirm_password = request.form['confirm_password']
         if not user_password:
@@ -125,47 +131,67 @@ def register():
         elif len(user_password) < 8:
             error += 1
             flash("Password must be at least 8 characters long.")
-#get info from db
+        #get info from db
         query = "SELECT * from users where email = :email LIMIT 1"
         data = {
             'email': request.form['register_email']
         }
         get_user_reg = mysql.query_db(query, data)
-#check the email if it already exists
+        #check the email if it already exists
         if get_user_reg:
             flash("Email already exists, please login or use a different email.")
             error += 1
-#prior to the insert, return any errors.
+        #prior to the insert, return any errors.
         if error > 0:
             return redirect('/register')
-#Generate password hash with BCrypt
+        #Generate password hash with BCrypt
         pw_hash = bcrypt.generate_password_hash(user_password)
-#Insert Query Build
+        #Insert Query Build
         query = "INSERT INTO users (first_name, last_name, email, password, \
-                created_at, updated_at) values (:first_name, :last_name, \
-                :email, :password, now(), now())"
+                 created_at, updated_at) values (:first_name, :last_name, \
+                 :email, :password, now(), now())"
         data = {
             'first_name': first_name, 'last_name': last_name, \
             'email': email, 'password': pw_hash}
-#Run insert Query, set session logged in = True, go to wall page
+        #Run insert Query, set session logged in = True, go to wall page
         mysql.query_db(query, data)
-#All checks are done, no errors, set some session data here. 
-#get info from db
+        #All checks are done, no errors, set some session data here.
+        #get info from db
         query = "SELECT * from users where email = :email LIMIT 1"
         data = {
             'email': request.form['register_email']
         }
         get_user_reg = mysql.query_db(query, data)
-#check the email, which should be in the db now, get session data.
+        #check the email, which should be in the db now, get session data.
         if get_user_reg:
             session['id'] = get_user_reg[0]['id']
             session['user_first_name'] = get_user_reg[0]['first_name']
             session['logged_in'] = True
         else:
-#catchall error, in case the insert failed for some reason. 
+            #catchall error, in case the insert failed for some reason.
             flash("Unknown error, db insert failed, could not find user account...")
             return redirect('/login')
-#all processing is complete, redirect to "The Wall" as a logged in user!
+        #all processing is complete, redirect to "The Wall" as a logged in user!
+        return redirect('/')
+
+
+@app.route('/postmessage', methods=['GET', 'POST'])
+def post(): 
+    if session['logged_in'] == True:
+        print request.form
+        #Insert Query Build
+        query = "INSERT INTO messages (message, created_at, updated_at, user_id) \
+                                       values (:message, now(), now(), :user_id)"
+        data = {
+            'message': request.form['message'], 'user_id': session['id']
+        }
+        #Run insert Query, set session logged in = True, go to wall page
+        mysql.query_db(query, data)
+        print "Message Added"
+        return redirect('/')
+    else:
+        flash("You can only post messages if you are logged in.")
+        flash("Please login, or register before posting. You can register in the login screen.")
         return redirect('/')
 
 app.run(debug=True)

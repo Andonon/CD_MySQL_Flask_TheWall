@@ -29,7 +29,7 @@
             </div> 
         </div>
         <div id='wrapper'>
-            <div id='messagearea'>
+            <div id='flasharea'>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
                         <ul class=flashes>
@@ -45,6 +45,16 @@
                 <p><input type="textarea" name="message" id="message"></label></p>
                 <p><input type="submit" id='postmessagebutton' value="Post a message"></p>
             </form>
+            <div id=messagesarea>
+                <ul class='messagesheader'>
+                    {% for em in user_messages %}                    
+                    <li>{{ em.first_name }} {{ em.last_name }} - {{ em.datecreated }}</li>
+                    <ul class='messagestext'>
+                        <li>{{ em.message }}</li>
+                    </ul>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
         <footer><p>By Troy Center, June 2017, Coding Dojo Student</p></footer>
     </body>

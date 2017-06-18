@@ -55,7 +55,7 @@ footer {
 /*    Flash Messages CSS                          */
 /***************************************************/
 
-#messagearea {
+#flasharea {
     font-family: Courier New, Courier, monospace;
     color: red; 
     font-size: .7em;
@@ -115,4 +115,28 @@ label, input {
     position: relative; 
     left: 670px; 
     top: 13px;
+}
+
+#messagesarea {
+    background-color: yellow;
+    position: relative;
+    height: fit-content;
+    width: 700px;
+    top: 80px;
+    margin: 20px;
+}
+
+#messagesarea ul {
+    padding-left: 10px;
+}
+
+.messagesheader {
+    list-style: none; 
+    margin: 20px;
+    font-weight: bold;
+}
+.messagestext {
+    list-style: none;     
+    margin: 20px;
+    font-weight: normal;
 }
