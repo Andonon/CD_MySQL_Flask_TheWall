@@ -53,10 +53,12 @@
                         <li>{{ em.message }}</li>
                         <ul class='commentsheader'>
                         {% for ec in user_comments %}                                    
+                            {% if em.id == ec.message_id %}
                             <li>{{ ec.first_name }} {{ ec.last_name }} - {{ ec.datecreated }}</li>
                             <ul class='commentstext'>
                                 <li>{{ ec.comment }}</li>
                             </ul>
+                            {% endif %}
                         {% endfor %} 
                         <form action='/postcomment' method='POST' id="commentform">
                             <p><label for="comment">Post a comment</label></p>

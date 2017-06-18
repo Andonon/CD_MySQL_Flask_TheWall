@@ -20,15 +20,13 @@ def index():
     #get info from db
     messagequery = (
         "select m.message, DATE_FORMAT(m.created_at,'%M %D %Y') as datecreated, u.first_name, "
-        "u.last_name,m.id from messages m join users u on m.user_id = u.id")
+        "u.last_name,m.id from messages m join users u on m.user_id = u.id order by id desc")
     get_messages = mysql.query_db(messagequery)
-    print "get_messages= ", get_messages
     commentsquery = (
         "select c.comment, DATE_FORMAT(c.created_at,'%M %D %Y') as datecreated, u.first_name, "
         "u.last_name,c.message_id from comments c join users u on c.user_id = u.id")
     get_comments = mysql.query_db(commentsquery)
-    print "get_messages= ", get_messages
-    print "get_comments= ", get_comments
+    #send that query data back to Jinja to render on the page
     return render_template('index.html', user_messages=get_messages, user_comments=get_comments)
 
 @app.route('/logout')
