@@ -18,12 +18,18 @@ app.secret_key = 'lkjas0llkdj123dlkja089'
 @app.route('/')
 def index():
     #get info from db
-    query = (
+    messagequery = (
         "select m.message, DATE_FORMAT(m.created_at,'%M %D %Y') as datecreated, u.first_name, "
-        "u.last_name from messages m join users u on m.user_id = u.id")
-    get_messages = mysql.query_db(query)
+        "u.last_name,m.id from messages m join users u on m.user_id = u.id")
+    get_messages = mysql.query_db(messagequery)
     print "get_messages= ", get_messages
-    return render_template('index.html', user_messages=get_messages)
+    commentsquery = (
+        "select c.comment, DATE_FORMAT(c.created_at,'%M %D %Y') as datecreated, u.first_name, "
+        "u.last_name,c.message_id from comments c join users u on c.user_id = u.id")
+    get_comments = mysql.query_db(commentsquery)
+    print "get_messages= ", get_messages
+    print "get_comments= ", get_comments
+    return render_template('index.html', user_messages=get_messages, user_comments=get_comments)
 
 @app.route('/logout')
 def logout():
@@ -198,10 +204,11 @@ def postcomment():
     if session['logged_in']:
         print request.form
         #Insert Query Build
-        query = "INSERT INTO comments (comment, created_at, updated_at, user_id) \
-                                       values (:comment, now(), now(), :user_id)"
+        query = "INSERT INTO comments (comment, created_at, updated_at, user_id, message_id) \
+                                       values (:comment, now(), now(), :user_id, :message_id)"
         data = {
-            'comment': request.form['comment'], 'user_id': session['id']
+            'comment': request.form['comment'], 'message_id': request.form['messageid'], \
+            'user_id': session['id']
         }
         #Run insert Query, set session logged in = True, go to wall page
         mysql.query_db(query, data)

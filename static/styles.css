@@ -171,3 +171,12 @@ label, input {
 #commentform label {
     font-weight: bold;
 }
+.commentsheader {
+    list-style: none; 
+    font-weight: bold;
+}
+.commentstext {
+    list-style: none;     
+    margin: 20px;
+    font-weight: normal;
+}
