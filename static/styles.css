@@ -174,12 +174,9 @@ label, input {
 .commentsheader {
     list-style: none; 
     font-weight: bold;
-    font-size: .9em;
-
 }
 .commentstext {
     list-style: none;     
     margin: 20px;
     font-weight: normal;
-    font-size: .9em;
 }
