@@ -1,5 +1,5 @@
 '''==================================================================================
-This is "The Wall" project, a coding dojo assignment 
+This is "The Wall" project, a coding dojo assignment
 by: Troy Center, troycenter1@gmail.com, Coding Dojo Python fundamentals, June 2017
 =================================================================================='''
 #pylint: disable=C0103,C0111
@@ -16,7 +16,7 @@ app.secret_key = 'lkjas0llkdj123dlkja089'
 
 def clearsession():
     '''=========================================
-    My method to reset session data       
+    My method to reset session data
     ========================================='''
     print "===8=== Clear Session just ran"
     session['id'] = 0
@@ -27,7 +27,7 @@ def clearsession():
 @app.route('/')
 def index():
     '''=========================================
-    This is the home page of the wall loading, 
+    This is the home page of the wall loading,
     with refreshed messages and comments
     ========================================='''
     ##############################################
@@ -49,7 +49,7 @@ def index():
 @app.route('/logout')
 def logout():
     '''=========================================
-    This is the logout route, which resets session data 
+    This is the logout route, which resets session data
     and refreshes a false login state.
     ========================================='''
     clearsession()
@@ -59,7 +59,7 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''=========================================
-    This is the login route, which resets session data 
+    This is the login route, which resets session data
     and refreshes a true login state after validating the user exists.
     ========================================='''
     if request.method == 'POST':
@@ -89,7 +89,7 @@ def login():
         get_user = mysql.query_db(query, data)
         #####################################################
         # Check the user info and password
-        #####################################################    
+        #####################################################
         if get_user:
             session['id'] = get_user[0]['id']
             session['user_first_name'] = get_user[0]['first_name']
@@ -108,14 +108,14 @@ def login():
     else:
         #####################################################
         # exit on fail to main login page with flash error
-        #####################################################    
+        #####################################################
         if request.method == 'GET':
             return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     '''=========================================
-    This is the registration page route, which validates user input 
+    This is the registration page route, which validates user input
     and refreshes a true login state after creating the user and then
     running another db query to call the user ID back into Session Data
     ========================================='''
@@ -185,12 +185,10 @@ def register():
         if error > 0:
             return redirect('/register')
         ##############################################
-        #   BCRYPT Hashing 
+        #   BCRYPT Hashing
         ##############################################
         pw_hash = bcrypt.generate_password_hash(user_password)
-        ##############################################
         #  DATABASE INSERT
-        ##############################################
         query = "INSERT INTO users (first_name, last_name, email, password, \
                  created_at, updated_at) values (:first_name, :last_name, \
                  :email, :password, now(), now())"
@@ -224,9 +222,9 @@ def register():
 @app.route('/postmessage', methods=['GET', 'POST'])
 def postmessage():
     '''=========================================
-    This is the postmessage route, wich pushes new messages, 
-    assuming the user is logged in, to the DB, and returns a 
-    refreshed page with the comments. 
+    This is the postmessage route, wich pushes new messages,
+    assuming the user is logged in, to the DB, and returns a
+    refreshed page with the comments.
     ========================================='''
     if session['logged_in']:
         print request.form
@@ -248,7 +246,7 @@ def postmessage():
 @app.route('/postcomment', methods=['GET', 'POST'])
 def postcomment():
     '''=========================================
-    Same as the message route, but for comments. Assuming user is logged in, 
+    Same as the message route, but for comments. Assuming user is logged in,
     pushed comments to the DB.
     ========================================='''
     if session['logged_in']:
