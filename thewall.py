@@ -231,9 +231,9 @@ def postmessage():
     # on the app for the first time, and tries to post a message.
     #note self: i could make the buttons hidden unless loggedin.
     ##############################################
-    try: 
+    try:
         session['logged_in']
-    except:
+    except KeyError:
         session['logged_in'] = False
     
     if session['logged_in']:
