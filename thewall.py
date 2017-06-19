@@ -259,6 +259,11 @@ def postcomment():
     Same as the message route, but for comments. Assuming user is logged in,
     pushed comments to the DB.
     ========================================='''
+    try:
+        session['logged_in']
+    except KeyError:
+        session['logged_in'] = False
+
     if session['logged_in']:
         print request.form
         #Insert Query Build
