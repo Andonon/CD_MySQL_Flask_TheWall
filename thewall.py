@@ -226,6 +226,16 @@ def postmessage():
     assuming the user is logged in, to the DB, and returns a
     refreshed page with the comments.
     ========================================='''
+    ##############################################
+    #  set session if not present, which can happen if someone lands
+    # on the app for the first time, and tries to post a message.
+    #note self: i could make the buttons hidden unless loggedin.
+    ##############################################
+    try: 
+        session['logged_in']
+    except:
+        session['logged_in'] = False
+    
     if session['logged_in']:
         print request.form
         #Insert Query Build
